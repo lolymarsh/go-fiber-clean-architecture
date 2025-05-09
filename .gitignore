@@ -1,0 +1,14 @@
+.env
+
+# go
+go.mod
+go.sum
+
+# fiber
+fiber.tar.gz
+
+# logs
+logs
+
+# redis
+dump.rdb
