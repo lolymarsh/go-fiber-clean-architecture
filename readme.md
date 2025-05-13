@@ -9,7 +9,6 @@ Inspired by https://github.com/BoomTHDev/b-pos-golang-server
 ```
 ├── config/         # Configuration files and setup
 ├── database/       # Database configurations and migrations
-├── entity/         # Domain entities/models
 ├── pkg/            # Shared packages and utilities
 ├── scripts/        # Helper scripts
 ├── server/         # Server setup and HTTP handlers
