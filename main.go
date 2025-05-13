@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"loly_api/config"
+	"loly_api/database"
 	"loly_api/server"
 	"os"
 	"os/signal"
@@ -10,17 +12,15 @@ import (
 )
 
 func main() {
-	conf, err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
-	}
-	server := server.NewServer(conf)
+	conf := config.LoadConfig()
+	db := database.NewDatabase(conf)
+	server := server.NewServer(conf, db)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		if err := server.Run(); err != nil {
-			log.Fatalf("Server failed to start: %v", err)
+			panic(fmt.Errorf("server failed to start: %w", err))
 		}
 	}()
 
@@ -28,7 +28,11 @@ func main() {
 	log.Println("Received shutdown signal, initiating graceful shutdown...")
 
 	if err := server.Shutdown(); err != nil {
-		log.Fatalf("Server shutdown failed: %v", err)
+		panic(fmt.Errorf("server failed to shutdown: %w", err))
+	}
+
+	if err := db.Close(); err != nil {
+		panic(fmt.Errorf("failed to close database connection: %w", err))
 	}
 
 	log.Println("Server gracefully stopped")

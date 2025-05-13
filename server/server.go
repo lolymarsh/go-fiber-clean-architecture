@@ -10,11 +10,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/jmoiron/sqlx"
 )
 
 type Server struct {
 	app  *fiber.App
 	conf *config.Config
+	db   *sqlx.DB
 }
 
 var (
@@ -22,7 +24,7 @@ var (
 	server *Server
 )
 
-func NewServer(conf *config.Config) *Server {
+func NewServer(conf *config.Config, db *sqlx.DB) *Server {
 
 	app := fiber.New(fiber.Config{
 		BodyLimit:   conf.App.BodyLimit * 1024 * 1024,
@@ -33,6 +35,7 @@ func NewServer(conf *config.Config) *Server {
 		server = &Server{
 			app:  app,
 			conf: conf,
+			db:   db,
 		}
 	})
 
