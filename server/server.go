@@ -14,9 +14,9 @@ import (
 )
 
 type Server struct {
-	app  *fiber.App
-	conf *config.Config
-	db   *sqlx.DB
+	App  *fiber.App
+	Conf *config.Config
+	Db   *sqlx.DB
 }
 
 var (
@@ -33,9 +33,9 @@ func NewServer(conf *config.Config, db *sqlx.DB) *Server {
 
 	once.Do(func() {
 		server = &Server{
-			app:  app,
-			conf: conf,
-			db:   db,
+			App:  app,
+			Conf: conf,
+			Db:   db,
 		}
 	})
 
@@ -44,21 +44,21 @@ func NewServer(conf *config.Config, db *sqlx.DB) *Server {
 
 func (s *Server) Run() error {
 
-	s.app.Use(recover.New())
-	s.app.Use(logger.New(logger.Config{
+	s.App.Use(recover.New())
+	s.App.Use(logger.New(logger.Config{
 		TimeZone:   "Asia/Bangkok",
 		TimeFormat: "2006-01-02 15:04:05",
 		Format:     `${ip} - - [${time}] "${method} ${url} ${protocol}" ${status}`,
 	}))
-	s.app.Use(cors.New(cors.Config{
-		AllowOrigins: fmt.Sprintf("%v", s.conf.App.AllowOrigins),
+	s.App.Use(cors.New(cors.Config{
+		AllowOrigins: fmt.Sprintf("%v", s.Conf.App.AllowOrigins),
 		AllowMethods: "GET,POST,PUT,PATCH,DELETE",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
-	return s.app.Listen(":" + s.conf.App.Port)
+	return s.App.Listen(":" + s.Conf.App.Port)
 }
 
 func (s *Server) Shutdown() error {
-	return s.app.Shutdown()
+	return s.App.Shutdown()
 }
